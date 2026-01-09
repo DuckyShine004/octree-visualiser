@@ -18,7 +18,7 @@ class Sphere {
 
     Sphere(float x, float y, float z);
 
-    void create();
+    void update(float delta_time);
 
     void render(engine::shader::Shader &shader);
 
@@ -28,11 +28,26 @@ class Sphere {
     static inline constexpr int _STACKS = 50;
     static inline constexpr int _SECTORS = 50;
 
+    static inline constexpr std::pair<float, float> _SPEED_LIMIT = {1.0f, 5.0f};
+
     static inline constexpr engine::entity::Topology _TOPOLOGY = engine::entity::Topology::TRIANGLE;
 
     glm::vec3 _position;
+    glm::vec3 _direction;
+
+    float _speed;
 
     engine::model::Mesh _mesh;
+
+    void initialise();
+
+    void create();
+
+    glm::vec3 get_direction();
+
+    float get_speed();
+
+    glm::vec3 get_velocity(float delta_time);
 };
 
 } // namespace engine::entity

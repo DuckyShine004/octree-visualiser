@@ -31,6 +31,8 @@ class Application {
 
     static void on_cursor(GLFWwindow *window, double x, double y);
 
+    static void on_scroll(GLFWwindow *window, double x, double y);
+
     void update(engine::Engine &engine);
 
     void render(engine::Engine &engine);
@@ -40,6 +42,8 @@ class Application {
     void handle_window_resize(GLFWwindow *window, int width, int height);
 
     void handle_cursor(GLFWwindow *window, double x, double y);
+
+    void handle_scroll(GLFWwindow *window, double x, double y);
 
     void on_cleanup();
 };

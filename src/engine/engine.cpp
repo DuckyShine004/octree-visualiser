@@ -23,7 +23,11 @@ void Engine::initialise() {
 
 void Engine::update(GLFWwindow *window, float delta_time) {
     this->_camera.update(window, delta_time);
+
     // TODO: Update entity positions
+    for (Sphere &sphere : this->_spheres) {
+        sphere.update(delta_time);
+    }
     // TODO: Construct quadtree
     // TODO: Mark colliding entities
 }

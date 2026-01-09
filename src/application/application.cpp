@@ -65,6 +65,7 @@ bool Application::initialise() {
     glfwSetKeyCallback(window, Application::on_key_press);
     glfwSetFramebufferSizeCallback(window, Application::on_window_resize);
     glfwSetCursorPosCallback(window, Application::on_cursor);
+    glfwSetScrollCallback(window, Application::on_scroll);
 
     this->_window = window;
 
@@ -161,6 +162,18 @@ void Application::handle_cursor(GLFWwindow *window, double x, double y) {
     camera::Camera &camera = this->_engine.get_camera();
 
     camera.rotate(x, y);
+}
+
+void Application::on_scroll(GLFWwindow *window, double x, double y) {
+    Application *application = static_cast<Application *>(glfwGetWindowUserPointer(window));
+
+    application->handle_scroll(window, x, y);
+}
+
+void Application::handle_scroll(GLFWwindow *window, double x, double y) {
+    camera::Camera &camera = this->_engine.get_camera();
+
+    camera.scroll(x, y);
 }
 
 void Application::on_cleanup() {

@@ -60,12 +60,16 @@ class Camera {
 
     void rotate(double x, double y);
 
+    void scroll(double x, double y);
+
     glm::vec3 get_front();
 
     glm::vec3 position;
 
   private:
     static inline constexpr float _FIELD_OF_VIEW = 45.0f;
+
+    static inline constexpr std::pair<float, float> _FIELD_OF_VIEW_LIMITS = {1.0f, 90.0f};
 
     static inline constexpr float _NEAR = 0.1f;
     static inline constexpr float _FAR = 100.0f;
@@ -82,6 +86,8 @@ class Camera {
     ViewComponent _view_component;
 
     RotationComponent _rotation_component;
+
+    float _field_of_view;
 
     glm::vec2 _last_cursor_position;
 

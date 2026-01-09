@@ -2,23 +2,22 @@
 
 #include "engine/camera/camera.hpp"
 
+#include "logger/logger_macros.hpp"
+
 using namespace engine::shader;
 
 namespace engine::camera {
 
-Camera::Camera() : position(glm::vec3(0.0f)), _last_cursor_position(glm::vec2(-1.0f)) {
+Camera::Camera() : Camera(0.0f, 0.0f, 0.0f) {
 }
 
-Camera::Camera(glm::vec3 position) : position(position), _last_cursor_position(glm::vec2(-1.0f)) {
-}
-
-Camera::Camera(float x, float y, float z) : position(glm::vec3(x, y, z)), _last_cursor_position(glm::vec2(-1.0f)) {
+Camera::Camera(float x, float y, float z) : position(x, y, z), _last_cursor_position(glm::vec2(-1.0f)), _field_of_view(this->_FIELD_OF_VIEW) {
 }
 
 void Camera::update_projection() {
     float aspect_ratio = 1280.0f / 720.0f;
 
-    float field_of_view = glm::radians(this->_FIELD_OF_VIEW);
+    float field_of_view = glm::radians(this->_field_of_view);
 
     this->_MVP_component.projection = glm::perspective(field_of_view, aspect_ratio, this->_NEAR, this->_FAR);
 }
@@ -107,6 +106,15 @@ void Camera::rotate(double x, double y) {
 
     this->update_rotation_component(offset);
     this->update_view_component();
+}
+
+void Camera::scroll(double x, double y) {
+    this->_field_of_view -= (float)y;
+    this->_field_of_view = glm::clamp(this->_field_of_view, this->_FIELD_OF_VIEW_LIMITS.first, this->_FIELD_OF_VIEW_LIMITS.second);
+
+    LOG_DEBUG("FOV: {}", this->_field_of_view);
+
+    this->update_projection();
 }
 
 glm::vec2 Camera::get_cursor_offset(glm::vec2 cursor_position) {

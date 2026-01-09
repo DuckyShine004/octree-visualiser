@@ -1,7 +1,10 @@
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
 
 #include "engine/entity/sphere.hpp"
+#include "utility/math_utility.hpp"
 
 using namespace engine::shader;
 
@@ -13,7 +16,14 @@ Sphere::Sphere() : Sphere(0.0f, 0.0f, 0.0f) {
 }
 
 Sphere::Sphere(float x, float y, float z) : _position(x, y, z) {
+    this->initialise();
+
     this->create();
+}
+
+void Sphere::initialise() {
+    this->_direction = this->get_direction();
+    this->_speed = this->get_speed();
 }
 
 void Sphere::create() {
@@ -62,11 +72,43 @@ void Sphere::create() {
     this->_mesh.upload();
 }
 
+void Sphere::update(float delta_time) {
+    glm::vec3 velocity = this->get_velocity(delta_time);
+
+    this->_position += velocity;
+}
+
 void Sphere::render(Shader &shader) {
     glm::mat4 model(1.0f);
     model = glm::translate(model, this->_position);
     shader.set_matrix4fv("u_model", model);
     this->_mesh.render(this->_TOPOLOGY);
+}
+
+glm::vec3 Sphere::get_direction() {
+    glm::vec3 direction = utility::MathUtility::get_random_vector3f(glm::epsilon<float>(), 1.0f);
+
+    if (utility::MathUtility::get_random_bool()) {
+        direction.x *= -1.0f;
+    }
+
+    if (utility::MathUtility::get_random_bool()) {
+        direction.y *= -1.0f;
+    }
+
+    if (utility::MathUtility::get_random_bool()) {
+        direction.z *= -1.0f;
+    }
+
+    return glm::normalize(direction);
+}
+
+float Sphere::get_speed() {
+    return utility::MathUtility::get_random_float(this->_SPEED_LIMIT.first, this->_SPEED_LIMIT.second);
+}
+
+glm::vec3 Sphere::get_velocity(float delta_time) {
+    return delta_time * this->_speed * this->_direction;
 }
 
 } // namespace engine::entity
