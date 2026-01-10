@@ -4,6 +4,9 @@
 #include <glm/gtc/constants.hpp>
 
 #include "engine/entity/sphere.hpp"
+
+#include "engine/octree/octree.hpp"
+
 #include "utility/math_utility.hpp"
 
 using namespace engine::shader;
@@ -73,15 +76,43 @@ void Sphere::create() {
 }
 
 void Sphere::update(float delta_time) {
-    glm::vec3 velocity = this->get_velocity(delta_time);
+    glm::vec3 velocity = delta_time * this->_speed * this->_direction;
+    glm::vec3 next_position = this->_position + velocity;
 
-    this->_position += velocity;
+    if (octree::Octree::out_of_bounds(next_position)) {
+        this->_direction = this->get_direction();
+        this->_speed = this->get_speed();
+    }
+
+    float octree_size = static_cast<float>(octree::Octree::get_size());
+
+    if (next_position.z <= 0.0f || next_position.x >= octree_size) {
+        this->_direction.x *= -1.0f;
+    }
+
+    if (next_position.y <= 0.0f || next_position.y >= octree_size) {
+        this->_direction.y *= -1.0f;
+    }
+
+    if (next_position.z <= 0.0f || next_position.z >= octree_size) {
+        this->_direction.z *= -1.0f;
+    }
+
+    next_position.x = glm::clamp(next_position.x, 0.0f, octree_size);
+    next_position.y = glm::clamp(next_position.y, 0.0f, octree_size);
+    next_position.z = glm::clamp(next_position.z, 0.0f, octree_size);
+
+    this->_position = next_position;
 }
 
 void Sphere::render(Shader &shader) {
     glm::mat4 model(1.0f);
+
     model = glm::translate(model, this->_position);
+    model = glm::scale(model, glm::vec3(this->_RADIUS));
+
     shader.set_matrix4fv("u_model", model);
+
     this->_mesh.render(this->_TOPOLOGY);
 }
 
@@ -105,10 +136,6 @@ glm::vec3 Sphere::get_direction() {
 
 float Sphere::get_speed() {
     return utility::MathUtility::get_random_float(this->_SPEED_LIMIT.first, this->_SPEED_LIMIT.second);
-}
-
-glm::vec3 Sphere::get_velocity(float delta_time) {
-    return delta_time * this->_speed * this->_direction;
 }
 
 } // namespace engine::entity

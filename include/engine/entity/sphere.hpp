@@ -28,7 +28,7 @@ class Sphere {
     static inline constexpr int _STACKS = 50;
     static inline constexpr int _SECTORS = 50;
 
-    static inline constexpr std::pair<float, float> _SPEED_LIMIT = {1.0f, 5.0f};
+    static inline constexpr std::pair<float, float> _SPEED_LIMIT = {5.0f, 10.0f};
 
     static inline constexpr engine::entity::Topology _TOPOLOGY = engine::entity::Topology::TRIANGLE;
 
@@ -46,8 +46,6 @@ class Sphere {
     glm::vec3 get_direction();
 
     float get_speed();
-
-    glm::vec3 get_velocity(float delta_time);
 };
 
 } // namespace engine::entity
