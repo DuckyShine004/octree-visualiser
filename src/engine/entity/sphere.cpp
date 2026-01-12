@@ -83,28 +83,29 @@ void Sphere::update(float delta_time) {
     glm::vec3 velocity = delta_time * this->_speed * this->_direction;
     glm::vec3 next_position = this->_position + velocity;
 
-    if (octree::Octree::out_of_bounds(next_position)) {
+    if (octree::Octree::out_of_bounds(next_position, this->_RADIUS)) {
         this->_direction = this->get_direction();
         this->_speed = this->get_speed();
     }
 
-    float octree_size = static_cast<float>(octree::Octree::get_size());
+    float lower = this->_RADIUS;
+    float upper = static_cast<float>(octree::Octree::get_size()) - this->_RADIUS;
 
-    if (next_position.z <= 0.0f || next_position.x >= octree_size) {
+    if (next_position.x <= lower || next_position.x >= upper) {
         this->_direction.x *= -1.0f;
     }
 
-    if (next_position.y <= 0.0f || next_position.y >= octree_size) {
+    if (next_position.y <= lower || next_position.y >= upper) {
         this->_direction.y *= -1.0f;
     }
 
-    if (next_position.z <= 0.0f || next_position.z >= octree_size) {
+    if (next_position.z <= lower || next_position.z >= upper) {
         this->_direction.z *= -1.0f;
     }
 
-    next_position.x = glm::clamp(next_position.x, 0.0f, octree_size);
-    next_position.y = glm::clamp(next_position.y, 0.0f, octree_size);
-    next_position.z = glm::clamp(next_position.z, 0.0f, octree_size);
+    next_position.x = glm::clamp(next_position.x, lower, upper);
+    next_position.y = glm::clamp(next_position.y, lower, upper);
+    next_position.z = glm::clamp(next_position.z, lower, upper);
 
     this->_position = next_position;
 
@@ -151,13 +152,17 @@ float Sphere::get_speed() {
 }
 
 bool Sphere::colliding(Sphere &other) {
-    float distance = glm::distance(this->_position, other.get_position());
+    glm::vec3 to_other = other.get_position() - this->_position;
 
-    return distance <= 2.0f * this->_RADIUS;
+    return glm::dot(to_other, to_other) <= 4.0f * this->_RADIUS * this->_RADIUS;
 }
 
 bool Sphere::get_colliding() {
     return this->_colliding;
+}
+
+float Sphere::get_radius() {
+    return this->_RADIUS;
 }
 
 void Sphere::set_colliding(bool colliding) {

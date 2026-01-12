@@ -28,6 +28,8 @@ class Sphere {
 
     bool get_colliding();
 
+    float get_radius();
+
     void set_colliding(bool colliding);
 
   private:

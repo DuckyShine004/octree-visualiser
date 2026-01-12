@@ -44,8 +44,18 @@ void AABB::render(Shader &shader) {
     this->_mesh.render(this->_TOPOLOGY);
 }
 
-bool AABB::collide(const glm::vec3 &position) {
-    return position.x >= this->_min_x && position.x <= this->_max_x && position.y >= this->_min_y && position.y <= this->_max_y && position.z >= this->_min_z && position.z <= this->_max_z;
+bool AABB::collide(Sphere &sphere) {
+    glm::vec3 position = sphere.get_position();
+
+    float radius = sphere.get_radius();
+
+    float x = glm::clamp(position.x, this->_min_x, this->_max_x);
+    float y = glm::clamp(position.y, this->_min_y, this->_max_y);
+    float z = glm::clamp(position.z, this->_min_z, this->_max_z);
+
+    glm::vec3 delta = position - glm::vec3(x, y, z);
+
+    return glm::dot(delta, delta) <= radius * radius;
 }
 
 } // namespace engine::entity

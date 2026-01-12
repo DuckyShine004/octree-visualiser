@@ -38,20 +38,21 @@ void Engine::update(GLFWwindow *window, float delta_time) {
     this->_octree.construct(this->_spheres);
     this->_AABBs = this->_octree.get_AABB();
 
-    // TODO: Mark collisions (efficiently)
     for (Sphere &sphere : this->_spheres) {
         if (sphere.get_colliding()) {
             continue;
         }
 
-        for (Sphere &other : this->_spheres) {
-            if (&sphere == &other) {
+        std::vector<Sphere *> spheres = this->_octree.query(sphere);
+
+        for (Sphere *other : spheres) {
+            if (other == &sphere) {
                 continue;
             }
 
-            if (sphere.colliding(other)) {
+            if (sphere.colliding(*other)) {
                 sphere.set_colliding(true);
-                other.set_colliding(true);
+                other->set_colliding(true);
             }
         }
     }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "engine/entity/sphere.hpp"
 #include "engine/entity/topology.hpp"
 
 #include "engine/model/mesh.hpp"
@@ -22,7 +23,7 @@ class AABB {
 
     void render(shader::Shader &shader);
 
-    bool collide(const glm::vec3 &position);
+    bool collide(engine::entity::Sphere &sphere);
 
   private:
     static inline constexpr engine::entity::Topology _TOPOLOGY = engine::entity::Topology::LINE;

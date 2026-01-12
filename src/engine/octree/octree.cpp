@@ -20,7 +20,8 @@ std::unique_ptr<Node> Octree::construct(std::vector<Sphere> &spheres, float x, f
     int capacity = 0;
 
     for (Sphere &sphere : spheres) {
-        if (node->get_AABB().collide(sphere.get_position())) {
+        if (node->get_AABB().collide(sphere)) {
+            node->add_sphere(sphere);
             ++capacity;
         }
     }
@@ -28,6 +29,7 @@ std::unique_ptr<Node> Octree::construct(std::vector<Sphere> &spheres, float x, f
     float half_size = size / 2.0f;
 
     if (capacity <= this->_MAX_CAPACITY) {
+        node->set_is_leaf(true);
         return node;
     }
 
@@ -42,6 +44,38 @@ std::unique_ptr<Node> Octree::construct(std::vector<Sphere> &spheres, float x, f
     node->RUF = this->construct(spheres, x + half_size, y + half_size, z + half_size, half_size, depth + 1);
 
     return node;
+}
+
+std::vector<Sphere *> Octree::query(Sphere &sphere) {
+    Node *node = this->_root.get();
+
+    if (node == nullptr) {
+        return {};
+    }
+
+    while (!node->is_leaf()) {
+        if (node->LDB != nullptr && node->LDB->get_AABB().collide(sphere)) {
+            node = node->LDB.get();
+        } else if (node->RDB != nullptr && node->RDB->get_AABB().collide(sphere)) {
+            node = node->RDB.get();
+        } else if (node->LDF != nullptr && node->LDF->get_AABB().collide(sphere)) {
+            node = node->LDF.get();
+        } else if (node->RDF != nullptr && node->RDF->get_AABB().collide(sphere)) {
+            node = node->RDF.get();
+        } else if (node->LUB != nullptr && node->LUB->get_AABB().collide(sphere)) {
+            node = node->LUB.get();
+        } else if (node->RUB != nullptr && node->RUB->get_AABB().collide(sphere)) {
+            node = node->RUB.get();
+        } else if (node->LUF != nullptr && node->LUF->get_AABB().collide(sphere)) {
+            node = node->LUF.get();
+        } else if (node->RUF != nullptr && node->RUF->get_AABB().collide(sphere)) {
+            node = node->RUF.get();
+        } else {
+            break;
+        }
+    }
+
+    return node->get_spheres();
 }
 
 std::vector<AABB> Octree::get_AABB() {
@@ -84,9 +118,9 @@ int Octree::get_size() {
     return Octree::_SIZE;
 }
 
-bool Octree::out_of_bounds(glm::vec3 &position) {
-    float lower = 0.0f;
-    float upper = Octree::_SIZE;
+bool Octree::out_of_bounds(glm::vec3 &position, float size) {
+    float lower = size;
+    float upper = Octree::_SIZE - size;
 
     return position.x <= lower || position.x >= upper || position.y <= lower || position.y >= upper || position.z <= lower || position.z >= upper;
 }

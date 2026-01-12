@@ -17,9 +17,11 @@ class Octree {
 
     std::vector<engine::entity::AABB> get_AABB();
 
+    std::vector<engine::entity::Sphere *> query(engine::entity::Sphere &sphere);
+
     static int get_size();
 
-    static bool out_of_bounds(glm::vec3 &position);
+    static bool out_of_bounds(glm::vec3 &position, float size);
 
   private:
     static inline constexpr int _SIZE = (1 << 4);
