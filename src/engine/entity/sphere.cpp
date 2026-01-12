@@ -153,7 +153,11 @@ float Sphere::get_speed() {
 bool Sphere::colliding(Sphere &other) {
     float distance = glm::distance(this->_position, other.get_position());
 
-    return distance <= this->_RADIUS;
+    return distance <= 2.0f * this->_RADIUS;
+}
+
+bool Sphere::get_colliding() {
+    return this->_colliding;
 }
 
 void Sphere::set_colliding(bool colliding) {

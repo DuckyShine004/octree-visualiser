@@ -26,6 +26,8 @@ class Sphere {
 
     glm::vec3 get_position();
 
+    bool get_colliding();
+
     void set_colliding(bool colliding);
 
   private:

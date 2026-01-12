@@ -40,6 +40,10 @@ void Engine::update(GLFWwindow *window, float delta_time) {
 
     // TODO: Mark collisions (efficiently)
     for (Sphere &sphere : this->_spheres) {
+        if (sphere.get_colliding()) {
+            continue;
+        }
+
         for (Sphere &other : this->_spheres) {
             if (&sphere == &other) {
                 continue;
