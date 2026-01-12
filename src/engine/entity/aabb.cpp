@@ -1,9 +1,51 @@
 #include "engine/entity/aabb.hpp"
 
+#include "common/constant.hpp"
+
+using namespace engine::shader;
+
+using namespace common;
+
 namespace engine::entity {
 
-void AABB::render() {
+AABB::AABB(float x, float y, float z, float size) {
+    this->_min_x = x;
+    this->_min_y = y;
+    this->_min_z = z;
+
+    this->_max_x = x + size;
+    this->_max_y = y + size;
+    this->_max_z = z + size;
+
+    /* Bottom */
+    this->_mesh.add_vertex(this->_min_x, this->_min_y, this->_min_z);
+    this->_mesh.add_vertex(this->_min_x, this->_min_y, this->_max_z);
+    this->_mesh.add_vertex(this->_max_x, this->_min_y, this->_max_z);
+    this->_mesh.add_vertex(this->_max_x, this->_min_y, this->_min_z);
+
+    /* Top */
+    this->_mesh.add_vertex(this->_min_x, this->_max_y, this->_min_z);
+    this->_mesh.add_vertex(this->_min_x, this->_max_y, this->_max_z);
+    this->_mesh.add_vertex(this->_max_x, this->_max_y, this->_max_z);
+    this->_mesh.add_vertex(this->_max_x, this->_max_y, this->_min_z);
+
+    this->_mesh.add_indices(this->_INDICES);
+
+    this->_mesh.upload();
+}
+
+void AABB::render(Shader &shader) {
+    glm::mat4 model(1.0f);
+
+    shader.set_matrix4fv("u_model", model);
+
+    shader.set_vector3f("u_colour", WHITE_RGB);
+
     this->_mesh.render(this->_TOPOLOGY);
+}
+
+bool AABB::collide(const glm::vec3 &position) {
+    return position.x >= this->_min_x && position.x <= this->_max_x && position.y >= this->_min_y && position.y <= this->_max_y && position.z >= this->_min_z && position.z <= this->_max_z;
 }
 
 } // namespace engine::entity

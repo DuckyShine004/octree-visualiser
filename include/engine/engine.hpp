@@ -5,6 +5,8 @@
 #include "engine/entity/aabb.hpp"
 #include "engine/entity/sphere.hpp"
 
+#include "engine/octree/octree.hpp"
+
 namespace engine {
 
 class Engine {
@@ -22,9 +24,11 @@ class Engine {
 
     camera::Camera _camera;
 
+    engine::octree::Octree _octree;
+
     std::vector<engine::entity::Sphere> _spheres;
 
-    engine::entity::AABB _aabb;
+    std::vector<engine::entity::AABB> _AABBs;
 };
 
 } // namespace engine

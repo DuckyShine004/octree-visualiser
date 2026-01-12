@@ -126,6 +126,12 @@ void Shader::set_vector3f(const GLchar *name, glm::vec3 vector) {
     glUniform3f(location, vector.x, vector.y, vector.z);
 }
 
+void Shader::set_vector3f(const GLchar *name, const float (&array)[3]) {
+    glm::vec3 vector(array[0], array[1], array[2]);
+
+    this->set_vector3f(name, vector);
+}
+
 void Shader::set_matrix4fv(const GLchar *name, glm::mat4 matrix) {
     GLint location = glGetUniformLocation(this->_program, name);
 

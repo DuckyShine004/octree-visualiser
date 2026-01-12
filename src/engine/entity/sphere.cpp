@@ -9,16 +9,20 @@
 
 #include "utility/math_utility.hpp"
 
+#include "common/constant.hpp"
+
 using namespace engine::shader;
 
 using namespace engine::model;
+
+using namespace common;
 
 namespace engine::entity {
 
 Sphere::Sphere() : Sphere(0.0f, 0.0f, 0.0f) {
 }
 
-Sphere::Sphere(float x, float y, float z) : _position(x, y, z) {
+Sphere::Sphere(float x, float y, float z) : _position(x, y, z), _colliding(false) {
     this->initialise();
 
     this->create();
@@ -103,6 +107,8 @@ void Sphere::update(float delta_time) {
     next_position.z = glm::clamp(next_position.z, 0.0f, octree_size);
 
     this->_position = next_position;
+
+    this->_colliding = false;
 }
 
 void Sphere::render(Shader &shader) {
@@ -112,6 +118,12 @@ void Sphere::render(Shader &shader) {
     model = glm::scale(model, glm::vec3(this->_RADIUS));
 
     shader.set_matrix4fv("u_model", model);
+
+    if (this->_colliding) {
+        shader.set_vector3f("u_colour", BLUE_RGB);
+    } else {
+        shader.set_vector3f("u_colour", WHITE_RGB);
+    }
 
     this->_mesh.render(this->_TOPOLOGY);
 }
@@ -136,6 +148,20 @@ glm::vec3 Sphere::get_direction() {
 
 float Sphere::get_speed() {
     return utility::MathUtility::get_random_float(this->_SPEED_LIMIT.first, this->_SPEED_LIMIT.second);
+}
+
+bool Sphere::colliding(Sphere &other) {
+    float distance = glm::distance(this->_position, other.get_position());
+
+    return distance <= this->_RADIUS;
+}
+
+void Sphere::set_colliding(bool colliding) {
+    this->_colliding = colliding;
+}
+
+glm::vec3 Sphere::get_position() {
+    return this->_position;
 }
 
 } // namespace engine::entity

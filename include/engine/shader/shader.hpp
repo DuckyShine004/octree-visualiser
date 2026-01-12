@@ -23,6 +23,7 @@ class Shader {
     void set_integer(const GLchar *name, int value);
 
     void set_vector3f(const GLchar *name, glm::vec3 vector);
+    void set_vector3f(const GLchar *name, const float (&array)[3]);
 
     void set_matrix4fv(const GLchar *name, glm::mat4 matrix);
 

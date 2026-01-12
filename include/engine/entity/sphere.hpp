@@ -22,6 +22,12 @@ class Sphere {
 
     void render(engine::shader::Shader &shader);
 
+    bool colliding(Sphere &other);
+
+    glm::vec3 get_position();
+
+    void set_colliding(bool colliding);
+
   private:
     static inline constexpr float _RADIUS = 1.0f;
 
@@ -36,6 +42,8 @@ class Sphere {
     glm::vec3 _direction;
 
     float _speed;
+
+    bool _colliding;
 
     engine::model::Mesh _mesh;
 

@@ -40,6 +40,9 @@ void Mesh::render(Topology topology) {
 }
 
 void Mesh::draw_lines() {
+    glBindVertexArray(this->_vao);
+    glDrawElements(GL_LINES, this->_indices.size(), GL_UNSIGNED_INT, (void *)0);
+    glBindVertexArray(0);
 }
 
 void Mesh::draw_triangles() {
@@ -50,6 +53,10 @@ void Mesh::draw_triangles() {
 
 void Mesh::add_vertex(Vertex &vertex) {
     this->_vertices.push_back(vertex);
+}
+
+void Mesh::add_vertex(float x, float y, float z) {
+    this->_vertices.emplace_back(x, y, z);
 }
 
 void Mesh::add_index(GLuint index) {

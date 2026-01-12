@@ -15,8 +15,13 @@ class Mesh {
     void render(engine::entity::Topology topology);
 
     void add_vertex(Vertex &vertex);
+    void add_vertex(float x, float y, float z);
 
     void add_index(GLuint index);
+
+    template <std::size_t N> void add_indices(const GLuint (&indices)[N]) {
+        this->_indices.insert(this->_indices.end(), std::begin(indices), std::end(indices));
+    }
 
     std::vector<engine::model::Vertex> &get_vertices();
 
