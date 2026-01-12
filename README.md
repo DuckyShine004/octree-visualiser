@@ -23,3 +23,5 @@ Run the project:
 ```
 
 ## Showcase
+
+https://github.com/user-attachments/assets/607287c9-2edb-411d-83b1-80fe48a301fa
